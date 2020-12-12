@@ -1,0 +1,16 @@
+{
+	"name": "webchemistry/oauth-social",
+	"autoload": {
+		"psr-4": {
+			"WebChemistry\\OAuthSocial\\": "src"
+		}
+	},
+	"require": {
+		"league/oauth2-google": "^3.0",
+		"league/oauth2-linkedin": "^5.1",
+		"nette/http": "^3.0"
+	},
+	"require-dev": {
+		"nette/di": "^3.0"
+	}
+}
