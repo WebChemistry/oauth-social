@@ -5,6 +5,8 @@ namespace WebChemistry\OAuthSocial\DI;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use WebChemistry\OAuthSocial\FacebookOAuthAccessor;
+use WebChemistry\OAuthSocial\Factory\FacebookOAuthInternalFactoryInterface;
 use WebChemistry\OAuthSocial\Factory\GoogleOAuthInternalFactoryInterface;
 use WebChemistry\OAuthSocial\Factory\LinkedInOAuthInternalFactoryInterface;
 use WebChemistry\OAuthSocial\GoogleOAuthAccessor;
@@ -19,7 +21,6 @@ class OAuthSocialExtension extends CompilerExtension
 			'google' => Expect::structure([
 				'id' => Expect::string(),
 				'secret' => Expect::string(),
-				'instances' => Expect::arrayOf('string'),
 			])->assert(
 				fn (object $structure) => $structure->id && $structure->secret || (!$structure->id && !$structure->secret),
 				'google > id and google > secret must be filled'
@@ -27,10 +28,16 @@ class OAuthSocialExtension extends CompilerExtension
 			'linkedIn' => Expect::structure([
 				'id' => Expect::string(),
 				'secret' => Expect::string(),
-				'instances' => Expect::arrayOf('string'),
 			])->assert(
 				fn (object $structure) => $structure->id && $structure->secret || (!$structure->id && !$structure->secret),
 				'linkedin > id and linkedin > secret must be filled'
+			),
+			'facebook' => Expect::structure([
+				'id' => Expect::string(),
+				'secret' => Expect::string(),
+			])->assert(
+				fn (object $structure) => $structure->id && $structure->secret || (!$structure->id && !$structure->secret),
+				'facebook > id and facebook > secret must be filled'
 			),
 		]);
 	}
@@ -48,7 +55,7 @@ class OAuthSocialExtension extends CompilerExtension
 
 			$builder->addDefinition($this->prefix('googleOAuthAccessor'))
 				->setFactory(GoogleOAuthAccessor::class, [
-					$section->id, $section->secret, $section->instances,
+					$section->id, $section->secret,
 				]);
 		}
 
@@ -60,7 +67,19 @@ class OAuthSocialExtension extends CompilerExtension
 
 			$builder->addDefinition($this->prefix('linkedInOAuthAccessor'))
 				->setFactory(LinkedInOAuthAccessor::class, [
-					$section->id, $section->secret, $section->instances,
+					$section->id, $section->secret,
+				]);
+		}
+
+		if ($config->facebook->id) {
+			$section = $config->facebook;
+
+			$builder->addFactoryDefinition($this->prefix('linkedInOAuth'))
+				->setImplement(FacebookOAuthInternalFactoryInterface::class);
+
+			$builder->addDefinition($this->prefix('linkedInOAuthAccessor'))
+				->setFactory(FacebookOAuthAccessor::class, [
+					$section->id, $section->secret,
 				]);
 		}
 	}

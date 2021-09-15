@@ -10,7 +10,7 @@ use Nette\Http\SessionSection;
 use WebChemistry\OAuthSocial\Exception\OAuthSocialException;
 use WebChemistry\OAuthSocial\Identity\OAuthIdentity;
 
-abstract class BaseOAuth
+abstract class BaseOAuth implements OAuthInterface
 {
 
 	protected AbstractProvider $provider;
