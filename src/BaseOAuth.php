@@ -4,6 +4,7 @@ namespace WebChemistry\OAuthSocial;
 
 use Exception;
 use League\OAuth2\Client\Provider\AbstractProvider;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Nette\Http\Request;
 use Nette\Http\SessionSection;
@@ -68,9 +69,15 @@ abstract class BaseOAuth implements OAuthInterface
 
 		unset($session['state']);
 
-		$token = $this->provider->getAccessToken('authorization_code', [
-			'code' => $code,
-		]);
+		try {
+			$token = $this->provider->getAccessToken('authorization_code', [
+				'code' => $code,
+			]);
+		} catch (IdentityProviderException $e) {
+			if ($e->getMessage() === 'invalid_grant') {
+				throw new OAuthSocialException('Something gone wrong, please try again.', previous: $e);
+			}
+		}
 
 		try {
 			$resourceOwner = $this->provider->getResourceOwner($token);
