@@ -77,6 +77,8 @@ abstract class BaseOAuth implements OAuthInterface
 			if ($e->getMessage() === 'invalid_grant') {
 				throw new OAuthSocialException('Something gone wrong, please try again.', previous: $e);
 			}
+
+			throw $e;
 		}
 
 		try {
