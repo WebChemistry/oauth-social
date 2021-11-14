@@ -7,12 +7,12 @@ final class OAuthIdentity
 
 	private string $email;
 
-	private string $name;
+	private ?string $name;
 
 	/** @var mixed[] */
 	private array $options;
 
-	public function __construct(string $email, string $name, array $options)
+	public function __construct(string $email, ?string $name, array $options)
 	{
 		$this->email = $email;
 		$this->name = $name;
@@ -24,7 +24,7 @@ final class OAuthIdentity
 		return $this->email;
 	}
 
-	public function getName(): string
+	public function getName(): ?string
 	{
 		return $this->name;
 	}

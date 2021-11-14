@@ -84,7 +84,7 @@ abstract class BaseOAuth implements OAuthInterface
 		try {
 			$resourceOwner = $this->provider->getResourceOwner($token);
 		} catch (Exception $e) {
-			throw new OAuthSocialException($e->getMessage());
+			throw new OAuthSocialException($e->getMessage(), 0, $e);
 		}
 
 		return $this->createIdentity($resourceOwner, $session);

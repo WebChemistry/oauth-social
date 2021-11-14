@@ -9,6 +9,7 @@
 		"league/oauth2-google": "^3.0",
 		"league/oauth2-linkedin": "^5.1",
 		"league/oauth2-facebook": "^2.0",
+		"webchemistry/oauth2-seznam": "^1.0",
 		"nette/http": "^3.0"
 	},
 	"require-dev": {

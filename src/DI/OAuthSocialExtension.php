@@ -9,8 +9,10 @@ use WebChemistry\OAuthSocial\FacebookOAuthAccessor;
 use WebChemistry\OAuthSocial\Factory\FacebookOAuthInternalFactoryInterface;
 use WebChemistry\OAuthSocial\Factory\GoogleOAuthInternalFactoryInterface;
 use WebChemistry\OAuthSocial\Factory\LinkedInOAuthInternalFactoryInterface;
+use WebChemistry\OAuthSocial\Factory\SeznamOAuth2InternalFactoryInterface;
 use WebChemistry\OAuthSocial\GoogleOAuthAccessor;
 use WebChemistry\OAuthSocial\LinkedInOAuthAccessor;
+use WebChemistry\OAuthSocial\SeznamOAuth2Accessor;
 
 class OAuthSocialExtension extends CompilerExtension
 {
@@ -38,6 +40,13 @@ class OAuthSocialExtension extends CompilerExtension
 			])->assert(
 				fn (object $structure) => $structure->id && $structure->secret || (!$structure->id && !$structure->secret),
 				'facebook > id and facebook > secret must be filled'
+			),
+			'seznam' => Expect::structure([
+				'id' => Expect::string(),
+				'secret' => Expect::string(),
+			])->assert(
+				fn (object $structure) => $structure->id && $structure->secret || (!$structure->id && !$structure->secret),
+				'seznam > id and seznam > secret must be filled'
 			),
 		]);
 	}
@@ -79,6 +88,18 @@ class OAuthSocialExtension extends CompilerExtension
 
 			$builder->addDefinition($this->prefix('linkedInOAuthAccessor'))
 				->setFactory(FacebookOAuthAccessor::class, [
+					$section->id, $section->secret,
+				]);
+		}
+
+		if ($config->seznam->id) {
+			$section = $config->seznam;
+
+			$builder->addFactoryDefinition($this->prefix('seznamInOAuth'))
+				->setImplement(SeznamOAuth2InternalFactoryInterface::class);
+
+			$builder->addDefinition($this->prefix('seznamInOAuthAccessor'))
+				->setFactory(SeznamOAuth2Accessor::class, [
 					$section->id, $section->secret,
 				]);
 		}
