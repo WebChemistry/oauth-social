@@ -9,6 +9,11 @@ interface OAuthInterface
 {
 
 	/**
+	 * @param mixed[] $options
+	 */
+	public function getAuthorizationUrl(array $options = []): string;
+
+	/**
 	 * @throws OAuthSocialException
 	 */
 	public function getIdentityAndVerify(): OAuthIdentity;

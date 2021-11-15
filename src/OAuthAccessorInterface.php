@@ -5,6 +5,6 @@ namespace WebChemistry\OAuthSocial;
 interface OAuthAccessorInterface
 {
 
-	public function get(string $instance): OAuthInterface;
+	public function get(string $link): OAuthInterface;
 
 }
