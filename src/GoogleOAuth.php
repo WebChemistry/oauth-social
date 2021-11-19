@@ -8,6 +8,7 @@ use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Nette\Http\Request;
 use Nette\Http\Session;
 use Nette\Http\SessionSection;
+use WebChemistry\OAuthSocial\Exception\OAuth2EmailNotProvidedException;
 use WebChemistry\OAuthSocial\Exception\OAuthSocialException;
 use WebChemistry\OAuthSocial\Identity\OAuthIdentity;
 
@@ -39,11 +40,7 @@ class GoogleOAuth extends BaseOAuth
 		assert($resource instanceof GoogleUser);
 
 		if (!$resource->getEmail()) {
-			throw new OAuthSocialException('You must grant access to obtain your email.');
-		}
-
-		if (!$resource->getName()) {
-			throw new OAuthSocialException('You must grant access to obtain your email.');
+			throw new OAuth2EmailNotProvidedException();
 		}
 
 		return new OAuthIdentity($resource->getEmail(), $resource->getName(), $options);

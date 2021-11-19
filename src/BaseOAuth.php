@@ -8,6 +8,9 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Nette\Http\Request;
 use Nette\Http\SessionSection;
+use WebChemistry\OAuthSocial\Exception\OAuth2AccessDeniedException;
+use WebChemistry\OAuthSocial\Exception\OAuth2CsrfDetectedException;
+use WebChemistry\OAuthSocial\Exception\OAuth2EmailNotProvidedException;
 use WebChemistry\OAuthSocial\Exception\OAuthSocialException;
 use WebChemistry\OAuthSocial\Identity\OAuthIdentity;
 
@@ -50,21 +53,31 @@ abstract class BaseOAuth implements OAuthInterface
 		return $link;
 	}
 
+	/**
+	 * @throws OAuth2AccessDeniedException
+	 * @throws OAuthSocialException
+	 * @throws OAuth2CsrfDetectedException
+	 * @throws OAuth2EmailNotProvidedException
+	 */
 	public function getIdentityAndVerify(): OAuthIdentity
 	{
+		if ($error = $this->request->getQuery('error')) {
+			if ($error === 'access_denied') {
+				throw new OAuth2AccessDeniedException('Access denied');
+			}
+
+			throw new OAuthSocialException($error);
+		}
+
 		$code = $this->request->getQuery('code');
 		if (!$code) {
 			throw new OAuthSocialException('Invalid code given, try it again');
 		}
 
-		if ($error = $this->request->getQuery('error')) {
-			throw new OAuthSocialException($error);
-		}
-
 		$session = iterator_to_array($this->getSession());
 		$state = $this->request->getQuery('state');
 		if (!$state || !isset($session['state']) || $state !== $session['state']) {
-			throw new OAuthSocialException('CSRF detected, try it again');
+			throw new OAuth2CsrfDetectedException();
 		}
 
 		unset($session['state']);
