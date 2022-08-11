@@ -5,7 +5,7 @@ namespace WebChemistry\OAuthSocial;
 use League\OAuth2\Client\Provider\LinkedIn;
 use League\OAuth2\Client\Provider\LinkedInResourceOwner;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
-use Nette\Http\Request;
+use Nette\Http\IRequest;
 use Nette\Http\Session;
 use Nette\Http\SessionSection;
 use WebChemistry\OAuthSocial\Identity\OAuthIdentity;
@@ -17,7 +17,7 @@ class LinkedInOAuth extends BaseOAuth
 
 	private Session $session;
 
-	public function __construct(string $id, string $secret, string $redirectUrl, Session $session, Request $request)
+	public function __construct(string $id, string $secret, string $redirectUrl, Session $session, IRequest $request)
 	{
 		parent::__construct(new LinkedIn([
 			'clientId' => $id,

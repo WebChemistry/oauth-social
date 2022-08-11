@@ -5,11 +5,10 @@ namespace WebChemistry\OAuthSocial;
 use League\OAuth2\Client\Provider\Facebook;
 use League\OAuth2\Client\Provider\FacebookUser;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
-use Nette\Http\Request;
+use Nette\Http\IRequest;
 use Nette\Http\Session;
 use Nette\Http\SessionSection;
 use WebChemistry\OAuthSocial\Exception\OAuth2EmailNotProvidedException;
-use WebChemistry\OAuthSocial\Exception\OAuthSocialException;
 use WebChemistry\OAuthSocial\Identity\OAuthIdentity;
 
 class FacebookOAuth extends BaseOAuth
@@ -19,7 +18,7 @@ class FacebookOAuth extends BaseOAuth
 
 	private Session $session;
 
-	public function __construct(string $id, string $secret, string $redirectUrl, Session $session, Request $request)
+	public function __construct(string $id, string $secret, string $redirectUrl, Session $session, IRequest $request)
 	{
 		parent::__construct(new Facebook([
 			'clientId' => $id,
