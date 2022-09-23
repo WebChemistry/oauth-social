@@ -25,25 +25,25 @@ class OAuthSocialExtension extends CompilerExtension
 			'google' => Expect::structure([
 				'id' => Expect::string()->required(),
 				'secret' => Expect::string()->required(),
-			]),
+			])->required(false),
 			'linkedIn' => Expect::structure([
 				'id' => Expect::string()->required(),
 				'secret' => Expect::string()->required(),
-			]),
+			])->required(false),
 			'facebook' => Expect::structure([
 				'id' => Expect::string()->required(),
 				'secret' => Expect::string()->required(),
-			]),
+			])->required(false),
 			'seznam' => Expect::structure([
 				'id' => Expect::string()->required(),
 				'secret' => Expect::string()->required(),
-			]),
+			])->required(false),
 			'apple' => Expect::structure([
 				'clientId' => Expect::string()->required(),
 				'teamId' => Expect::string()->required(),
 				'keyId' => Expect::string()->required(),
 				'keyPath' => Expect::string()->required(),
-			]),
+			])->required(false),
 		]);
 	}
 
@@ -52,7 +52,7 @@ class OAuthSocialExtension extends CompilerExtension
 		$config = $this->getConfig();
 		$builder = $this->getContainerBuilder();
 
-		if ($config->google->id) {
+		if ($config->google) {
 			$section = $config->google;
 
 			$builder->addFactoryDefinition($this->prefix('googleOAuth'))
@@ -64,7 +64,7 @@ class OAuthSocialExtension extends CompilerExtension
 				]);
 		}
 
-		if ($config->linkedIn->id) {
+		if ($config->linkedIn) {
 			$section = $config->linkedIn;
 
 			$builder->addFactoryDefinition($this->prefix('linkedInOAuth'))
@@ -76,7 +76,7 @@ class OAuthSocialExtension extends CompilerExtension
 				]);
 		}
 
-		if ($config->facebook->id) {
+		if ($config->facebook) {
 			$section = $config->facebook;
 
 			$builder->addFactoryDefinition($this->prefix('facebookOAuth'))
@@ -88,7 +88,7 @@ class OAuthSocialExtension extends CompilerExtension
 				]);
 		}
 
-		if ($config->seznam->id) {
+		if ($config->seznam) {
 			$section = $config->seznam;
 
 			$builder->addFactoryDefinition($this->prefix('seznamOAuth'))
@@ -100,7 +100,7 @@ class OAuthSocialExtension extends CompilerExtension
 				]);
 		}
 
-		if ($config->apple->clientId) {
+		if ($config->apple) {
 			$section = $config->apple;
 
 			$builder->addFactoryDefinition($this->prefix('appleOAuth'))
