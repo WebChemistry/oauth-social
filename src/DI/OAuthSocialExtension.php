@@ -5,7 +5,9 @@ namespace WebChemistry\OAuthSocial\DI;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use WebChemistry\OAuthSocial\AppleOAuthAccessor;
 use WebChemistry\OAuthSocial\FacebookOAuthAccessor;
+use WebChemistry\OAuthSocial\Factory\AppleOAuthInternalFactoryInterface;
 use WebChemistry\OAuthSocial\Factory\FacebookOAuthInternalFactoryInterface;
 use WebChemistry\OAuthSocial\Factory\GoogleOAuthInternalFactoryInterface;
 use WebChemistry\OAuthSocial\Factory\LinkedInOAuthInternalFactoryInterface;
@@ -21,33 +23,27 @@ class OAuthSocialExtension extends CompilerExtension
 	{
 		return Expect::structure([
 			'google' => Expect::structure([
-				'id' => Expect::string(),
-				'secret' => Expect::string(),
-			])->assert(
-				fn (object $structure) => $structure->id && $structure->secret || (!$structure->id && !$structure->secret),
-				'google > id and google > secret must be filled'
-			),
+				'id' => Expect::string()->required(),
+				'secret' => Expect::string()->required(),
+			]),
 			'linkedIn' => Expect::structure([
-				'id' => Expect::string(),
-				'secret' => Expect::string(),
-			])->assert(
-				fn (object $structure) => $structure->id && $structure->secret || (!$structure->id && !$structure->secret),
-				'linkedin > id and linkedin > secret must be filled'
-			),
+				'id' => Expect::string()->required(),
+				'secret' => Expect::string()->required(),
+			]),
 			'facebook' => Expect::structure([
-				'id' => Expect::string(),
-				'secret' => Expect::string(),
-			])->assert(
-				fn (object $structure) => $structure->id && $structure->secret || (!$structure->id && !$structure->secret),
-				'facebook > id and facebook > secret must be filled'
-			),
+				'id' => Expect::string()->required(),
+				'secret' => Expect::string()->required(),
+			]),
 			'seznam' => Expect::structure([
-				'id' => Expect::string(),
-				'secret' => Expect::string(),
-			])->assert(
-				fn (object $structure) => $structure->id && $structure->secret || (!$structure->id && !$structure->secret),
-				'seznam > id and seznam > secret must be filled'
-			),
+				'id' => Expect::string()->required(),
+				'secret' => Expect::string()->required(),
+			]),
+			'apple' => Expect::structure([
+				'clientId' => Expect::string()->required(),
+				'teamId' => Expect::string()->required(),
+				'keyId' => Expect::string()->required(),
+				'keyPath' => Expect::string()->required(),
+			]),
 		]);
 	}
 
@@ -83,10 +79,10 @@ class OAuthSocialExtension extends CompilerExtension
 		if ($config->facebook->id) {
 			$section = $config->facebook;
 
-			$builder->addFactoryDefinition($this->prefix('linkedInOAuth'))
+			$builder->addFactoryDefinition($this->prefix('facebookOAuth'))
 				->setImplement(FacebookOAuthInternalFactoryInterface::class);
 
-			$builder->addDefinition($this->prefix('linkedInOAuthAccessor'))
+			$builder->addDefinition($this->prefix('facebookOAuthAccessor'))
 				->setFactory(FacebookOAuthAccessor::class, [
 					$section->id, $section->secret,
 				]);
@@ -95,12 +91,24 @@ class OAuthSocialExtension extends CompilerExtension
 		if ($config->seznam->id) {
 			$section = $config->seznam;
 
-			$builder->addFactoryDefinition($this->prefix('seznamInOAuth'))
+			$builder->addFactoryDefinition($this->prefix('seznamOAuth'))
 				->setImplement(SeznamOAuth2InternalFactoryInterface::class);
 
-			$builder->addDefinition($this->prefix('seznamInOAuthAccessor'))
+			$builder->addDefinition($this->prefix('seznamOAuthAccessor'))
 				->setFactory(SeznamOAuth2Accessor::class, [
 					$section->id, $section->secret,
+				]);
+		}
+
+		if ($config->apple->clientId) {
+			$section = $config->apple;
+
+			$builder->addFactoryDefinition($this->prefix('appleOAuth'))
+				->setImplement(AppleOAuthInternalFactoryInterface::class);
+
+			$builder->addDefinition($this->prefix('appleOAuthAccessor'))
+				->setFactory(AppleOAuthAccessor::class, [
+					$section->clientId, $section->teamId, $section->keyId, $section->keyPath,
 				]);
 		}
 	}

@@ -13,6 +13,7 @@
 		"nette/http": "^3.0"
 	},
 	"require-dev": {
-		"nette/di": "^3.0"
+		"nette/di": "^3.0",
+		"patrickbussmann/oauth2-apple": "^0.2.9"
 	}
 }
