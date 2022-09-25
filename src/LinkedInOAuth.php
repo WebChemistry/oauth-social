@@ -2,6 +2,7 @@
 
 namespace WebChemistry\OAuthSocial;
 
+use Firebase\JWT\JWT;
 use League\OAuth2\Client\Provider\LinkedIn;
 use League\OAuth2\Client\Provider\LinkedInResourceOwner;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
@@ -19,6 +20,8 @@ class LinkedInOAuth extends BaseOAuth
 
 	public function __construct(string $id, string $secret, string $redirectUrl, Session $session, IRequest $request)
 	{
+		JWT::$leeway = 60;
+
 		parent::__construct(new LinkedIn([
 			'clientId' => $id,
 			'clientSecret' => $secret,
