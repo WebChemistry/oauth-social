@@ -78,8 +78,21 @@ abstract class BaseOAuth implements OAuthInterface
 
 		$session = iterator_to_array($this->getSession());
 		$state = $this->isPost ? $this->request->getPost('state') : $this->request->getQuery('state');
-		if (!$state || !isset($session['state']) || $state !== $session['state']) {
-			throw new OAuth2CsrfDetectedException();
+
+		if (!$state) {
+			throw new OAuth2CsrfDetectedException('State is not set in url.');
+		}
+
+		if (!isset($session['state'])) {
+			throw new OAuth2CsrfDetectedException('State is not set in session.');
+		}
+
+		if (!$session['state']) {
+			throw new OAuth2CsrfDetectedException('Session state is empty.');
+		}
+
+		if ($state !== $session['state']) {
+			throw new OAuth2CsrfDetectedException('State is not equal to session state.');
 		}
 
 		unset($session['state']);
