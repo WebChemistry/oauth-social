@@ -36,6 +36,7 @@ final class AppleOAuth extends BaseOAuth
 		]), $request);
 
 		$this->session = $session;
+		$this->isPost = true;
 	}
 
 	protected function getSession(): SessionSection

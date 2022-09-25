@@ -21,6 +21,8 @@ abstract class BaseOAuth implements OAuthInterface
 
 	private Request $request;
 
+	protected bool $isPost = false;
+
 	public function __construct(AbstractProvider $provider, Request $request)
 	{
 		$this->provider = $provider;
@@ -69,13 +71,13 @@ abstract class BaseOAuth implements OAuthInterface
 			throw new OAuthSocialException($error);
 		}
 
-		$code = $this->request->getQuery('code');
+		$code = $this->isPost ? $this->request->getPost('code') : $this->request->getQuery('code');
 		if (!$code) {
 			throw new OAuthSocialException('Invalid code given, try it again');
 		}
 
 		$session = iterator_to_array($this->getSession());
-		$state = $this->request->getQuery('state');
+		$state = $this->isPost ? $this->request->getPost('state') : $this->request->getQuery('state');
 		if (!$state || !isset($session['state']) || $state !== $session['state']) {
 			throw new OAuth2CsrfDetectedException();
 		}
