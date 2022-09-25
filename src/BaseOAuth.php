@@ -72,6 +72,7 @@ abstract class BaseOAuth implements OAuthInterface
 		}
 
 		$code = $this->isPost ? $this->request->getPost('code') : $this->request->getQuery('code');
+
 		if (!$code) {
 			throw new OAuthSocialException('Invalid code given, try it again');
 		}
@@ -121,7 +122,7 @@ abstract class BaseOAuth implements OAuthInterface
 			throw new OAuthSocialException($e->getMessage(), 0, $e);
 		}
 
-		return $this->createIdentity($resourceOwner, $session);
+		return $this->createIdentity($resourceOwner, iterator_to_array($this->getSession()));
 	}
 
 }
