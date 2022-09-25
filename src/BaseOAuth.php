@@ -49,7 +49,7 @@ abstract class BaseOAuth implements OAuthInterface
 		$options['state'] = $this->provider->getState();
 
 		foreach ($options as $key => $value) {
-			$session[$key] = $value;
+			$session->set($key, $value);
 		}
 
 		return $link;
@@ -76,26 +76,32 @@ abstract class BaseOAuth implements OAuthInterface
 			throw new OAuthSocialException('Invalid code given, try it again');
 		}
 
-		$session = iterator_to_array($this->getSession());
 		$state = $this->isPost ? $this->request->getPost('state') : $this->request->getQuery('state');
+		$sessionState = $this->getSession()->get('state');
 
 		if (!$state) {
+			if ($sessionState) {
+				$this->getSession()->remove('state');
+			}
+
 			throw new OAuth2CsrfDetectedException('State is not set in url.');
 		}
 
-		if (!isset($session['state'])) {
+		if ($sessionState === null) {
 			throw new OAuth2CsrfDetectedException('State is not set in session.');
 		}
 
-		if (!$session['state']) {
+		if (!$sessionState) {
 			throw new OAuth2CsrfDetectedException('Session state is empty.');
 		}
 
-		if ($state !== $session['state']) {
+		if ($state !== $sessionState) {
+			$this->getSession()->remove('state');
+
 			throw new OAuth2CsrfDetectedException('State is not equal to session state.');
 		}
 
-		unset($session['state']);
+		$this->getSession()->remove('state');
 
 		try {
 			$token = $this->provider->getAccessToken('authorization_code', [
