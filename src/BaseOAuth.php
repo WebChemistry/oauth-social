@@ -11,6 +11,7 @@ use Nette\Http\SessionSection;
 use WebChemistry\OAuthSocial\Exception\OAuth2AccessDeniedException;
 use WebChemistry\OAuthSocial\Exception\OAuth2CsrfDetectedException;
 use WebChemistry\OAuthSocial\Exception\OAuth2EmailNotProvidedException;
+use WebChemistry\OAuthSocial\Exception\OAuth2InvalidCodeException;
 use WebChemistry\OAuthSocial\Exception\OAuthSocialException;
 use WebChemistry\OAuthSocial\Identity\OAuthIdentity;
 
@@ -74,7 +75,7 @@ abstract class BaseOAuth implements OAuthInterface
 		$code = $this->isPost ? $this->request->getPost('code') : $this->request->getQuery('code');
 
 		if (!$code) {
-			throw new OAuthSocialException('Invalid code given, try it again');
+			throw new OAuth2InvalidCodeException('Invalid code given, try it again');
 		}
 
 		$state = $this->isPost ? $this->request->getPost('state') : $this->request->getQuery('state');
